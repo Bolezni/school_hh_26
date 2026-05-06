@@ -4,17 +4,85 @@ import java.util.Arrays;
 
 public class Sort {
     public static void main(String[] args) {
-        int[] arr = new int[100_000];
+        int[] arr = new int[500_000];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = (int) (Math.random() * 99);
         }
         long start = System.currentTimeMillis();
         System.out.println(Arrays.toString(arr));
 
-        shellSort(arr);
+        countingSort(arr);
         long end = System.currentTimeMillis();
         System.out.println(Arrays.toString(arr));
         System.out.println(end - start);
+    }
+
+    private static void countingSort(int[] arr) {
+        int max = Arrays.stream(arr).max().orElse(0);
+        int[] count = new int[max + 1];
+        for (int j : arr) {
+            count[j]++;
+        }
+
+        int index = 0;
+        for (int i = 0; i <= max; i++) {
+            while(count[i] > 0) {
+                arr[index++] = i;
+                count[i]--;
+            }
+        }
+    }
+
+    private static void mergeSort(int[] arr, int left, int right) {
+        if (left < right) {
+            int mid = left + (right - left) / 2;
+
+            mergeSort(arr, left, mid);
+            mergeSort(arr, mid + 1, right);
+
+            merge(arr, left, mid, right);
+        }
+    }
+
+    private static void merge(int[] arr, int left, int mid, int right) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+
+        int[] L = new int[n1];
+        int[] R = new int[n2];
+
+        for (int i = 0; i < n1; ++i) {
+            L[i] = arr[left + i];
+        }
+
+        for (int j = 0; j < n2; ++j) {
+            R[j] = arr[mid + 1 + j];
+        }
+
+        int i = 0, j = 0;
+        int k = left;
+        while (i < n1 && j < n2) {
+            if (L[i] <= R[j]) {
+                arr[k] = L[i];
+                i++;
+            } else {
+                arr[k] = R[j];
+                j++;
+            }
+            k++;
+        }
+
+        while (i < n1) {
+            arr[k] = L[i];
+            i++;
+            k++;
+        }
+
+        while (j < n2) {
+            arr[k] = R[j];
+            j++;
+            k++;
+        }
     }
 
     private static void shellSort(int[] arr) {
@@ -38,21 +106,21 @@ public class Sort {
         }
     }
 
-    private static void shellSort2(int[] array){
+    private static void shellSort2(int[] array) {
         int n = array.length;
 
         // Генерация последовательности Хиббарда
         int gap = 1;
-        while(gap < n /2 ){
+        while (gap < n / 2) {
             gap = gap * 2 + 1;
         }
 
-        while(gap > 0){
-            for(int i = gap; i < n; i++){
+        while (gap > 0) {
+            for (int i = gap; i < n; i++) {
                 int temp = array[i];
                 int j;
 
-                for(j = i; j >= gap && array[j - gap] > temp; j-= gap){
+                for (j = i; j >= gap && array[j - gap] > temp; j -= gap) {
                     array[j] = array[j - gap];
                 }
                 array[j] = temp;
@@ -107,7 +175,7 @@ public class Sort {
             int temp = arr[i];
             int j;
 
-            for (j = i; j >= gap && arr[j - gap] > temp; j-= gap) {
+            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
                 arr[j] = arr[j - gap];
             }
             arr[j] = temp;
@@ -124,7 +192,7 @@ public class Sort {
         }
     }
 
-    private static int partition(int[] arr, int low, int high){
+    private static int partition(int[] arr, int low, int high) {
         int pivot = arr[high];
         int i = low - 1;
         for (int j = low; j < high; j++) {

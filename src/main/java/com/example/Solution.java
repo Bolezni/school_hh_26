@@ -1,5 +1,8 @@
 package com.example;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Solution {
@@ -40,14 +43,163 @@ public class Solution {
         numberWords.put("billion", 1000000000);
     }
 
-    public static void main(String[] args) {
-        String[] arr = new String[]{"zone", "abigail", "theta", "form", "libe", "zas", "theta", "abigail"};
-        int k = 2;
-        String result = "abigailtheta";
-        String res = longestConsec(arr,k);
-        System.out.println(res);
-        System.out.println(result.equals(res));
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.parseInt(reader.readLine());
+        int[][] matrix = new int[N][];
+        for (int i = 0; i < matrix.length; i++) {
+            matrix[i] = Arrays.stream(reader.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        }
+        int[] data = Arrays.stream(reader.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int start = data[0] - 1;
+        int end = data[1] - 1;
+        reader.close();
+
+        int[] result = findLengthMinPath(matrix, start, N);
+
+        if (result[end] != Integer.MAX_VALUE) {
+            System.out.println(result[end]);
+        } else {
+            System.out.println(-1);
+        }
+
     }
+
+
+    private static int[] findLengthMinPath(int[][] grid, int start, int end){
+        Queue<Integer> queue = new LinkedList<>();
+        int n = grid.length;
+        boolean[] visited = new boolean[n];
+        int[] dist = new int[n];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+
+        queue.offer(start);
+        visited[start] = true;
+        dist[start] = 0;
+
+        while(!queue.isEmpty()){
+            int v = queue.poll();
+
+            if(v == end){
+                break;
+            }
+
+            for(int i = 0; i < n; i++){
+                if(grid[v][i] == 1 && !visited[i]){
+                    visited[i] = true;
+                    dist[i] = dist[v] + 1;
+                    queue.offer(i);
+                }
+            }
+        }
+
+        return dist;
+    }
+
+    private static char[] characters = {'a','b','c'};
+
+    public static String getHappyString(int n, int k) {
+        List<String> res = new ArrayList<>();
+        generateHappyString(n,k,res, characters, new StringBuilder());
+        return res.toString();
+    }
+
+    private static void generateHappyString(int n, int k, List<String> list, char[] words, StringBuilder str) {
+        if(k % words.length == 0 && str.length() == 3) {
+            list.add(str.toString());
+            return;
+        }
+
+        for(int i = n; i < k; i++){
+            str.append(words[i]);
+            generateHappyString(n + i, k, list, words, str);
+            str.deleteCharAt(str.length() - 1);
+        }
+    }
+
+    public ListNode rotateRight(ListNode head, int k) {
+        if(head == null) return head;
+        ListNode current = head;
+        int len = 1;
+
+        while(current.next != null) {
+            current = current.next;
+            len++;
+        }
+
+        int pos = k % len;
+        if(pos == 0){
+            return head;
+        }
+
+        ListNode tail = head;
+        int stepsToRevert = len - pos - 1;
+        for(int i = 0; i < stepsToRevert; i++){
+            tail = tail.next;
+        }
+        ListNode newHead = tail.next;
+        tail.next = null;
+        current.next = head;
+        return newHead;
+    }
+
+    //Дана последовательность строк strs, сгруппируйте их.анаграммыВместе. Вы можете вернуть ответ в любом порядке.
+    /**
+     *
+     * Входные данные: strs = ["eat","tea","tan","ate","nat","bat"]
+     *
+     * Вывод: [["bat"],["nat","tan"],["ate","eat","tea"]]
+     */
+    //Можно брать по очереди слова добавлять их в список и добавлении нового проверять есть ли анаграмма уже в списке,
+    // если нету добавлять как новую
+    public static List<List<String>> groupAnagrams(String[] strs) {
+        HashMap<String, List<String>> map = new HashMap<>();
+
+        for(String s : strs) {
+            char[] arr = s.toCharArray();
+            Arrays.sort(arr);
+            String key = new String(arr);
+            if(!map.containsKey(key)) {
+                map.put(key, new ArrayList<>());
+            }
+            map.get(key).add(s);
+        }
+        return new ArrayList<>(map.values());
+    }
+
+    private static boolean isAnagram(String s1, String s2) {
+        if (s1.length() != s2.length()) return false;
+        char[] c1 = s1.toLowerCase().toCharArray();
+        char[] c2 = s2.toLowerCase().toCharArray();
+        Arrays.sort(c1);
+        Arrays.sort(c2);
+        return Arrays.equals(c1, c2);
+    }
+
+    public static int[] rearrangeArray(int[] nums) {
+        int n = nums.length;
+
+        int[] result = new int[n];
+
+        int positiveIndex = 0;
+        int negativeIndex = 0;
+
+        //каждая пара целых чисел имеет противоположный знак
+        for (int i = 0; i < n; i++) {
+            if (i % 2 == 0) {
+                while (positiveIndex < n && nums[positiveIndex] < 0)
+                    positiveIndex++;
+                result[i] = nums[positiveIndex++];
+            } else {
+                while (negativeIndex < n && nums[negativeIndex] > 0)
+                    negativeIndex++;
+                result[i] = nums[negativeIndex++];
+            }
+        }
+
+        return result;
+    }
+
 
     public static String longestConsec(String[] strarr, int k) {
         int n = strarr.length;
