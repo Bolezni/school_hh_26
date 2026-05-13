@@ -1,8 +1,7 @@
 package com.example.leetcode;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Medium {
     static class TreeNode {
@@ -26,20 +25,27 @@ public class Medium {
     }
 
     public static void main(String[] args) throws IOException {
-        TreeNode root1 = new TreeNode(2);
-        root1.left = new TreeNode(1);
-        root1.right = new TreeNode(4);
 
-        TreeNode root2 = new TreeNode(1);
-        root2.left = new TreeNode(0);
-        root2.right = new TreeNode(3);
+    }
 
-        List<Integer> result = getAllElements(root1, root2);
+    //logs[i] = [IDi, timei]IDitimei
+    public int[] findingUsersActiveMinutes(int[][] logs, int k) {
+        int[] res = new int[k];
 
-        System.out.print("Результат: ");
-        for (int num : result) {
-            System.out.print(num + " ");
+        Map<Integer, Set<Integer>> userMinutes = new HashMap<>();
+
+        for(int[] i: logs){
+            int idx = i[0];
+            int value = i[1];
+
+            userMinutes.computeIfAbsent(idx, v -> new HashSet<>()).add(value);
         }
+
+        for(Set<Integer> set: userMinutes.values()){
+            res[set.size() - 1]++;
+        }
+
+        return res;
     }
 
     public String findDifferentBinaryString(String[] nums) {
