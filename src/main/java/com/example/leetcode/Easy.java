@@ -1,9 +1,6 @@
 package com.example.leetcode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class Easy {
 
@@ -27,10 +24,31 @@ public class Easy {
     }
 
     public static void main(String[] args) {
-        int[][] matrix = {{0, 1, 0}, {1, 0, 0}, {0, 0, 0}};
+        int[] nums = {3,5,2,3};
+        minPairSum(nums);
+    }
 
-        int[] res = findDegrees(matrix);
-        System.out.println(Arrays.toString(res));
+    //TODO: https://leetcode.com/problems/minimize-maximum-pair-sum-in-array/solutions/7518813/solution-by-la_castille-f2cy/
+    public static int minPairSum(int[] nums) {
+        Arrays.sort(nums);
+        int res = 0;
+        int n = nums.length;
+
+        for (int i = 0; i < n >> 1; i++)
+            res = Math.max(res, nums[n - 1 - i] + nums[i]);
+
+        return res;
+    }
+
+    public String restoreString(String s, int[] indices) {
+
+        char[] chars = new char[s.length()];
+
+        for(int i = 0; i< indices.length; i++){
+            chars[indices[i]] = s.charAt(i);
+        }
+
+        return new String(chars);
     }
 
     public static int[] findDegrees(int[][] matrix) {
